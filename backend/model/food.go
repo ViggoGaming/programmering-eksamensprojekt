@@ -16,7 +16,7 @@ type WeeklyMenu struct {
 	DayOfWeek  string `json:"dayofweek"`
 	WeekNumber int    `json:"weeknumber"`
 	Food       Food   `json:"food" gorm:"foreignkey:FoodID"`
-	//	FoodID     uint   `json:"foodid"`
+	FoodID     uint   `json:"foodid"`
 
 	//	FoodID     uint   `json:"foodid"`
 	//Food       Food   `json:"food" gorm:"foreignKey:ID"`

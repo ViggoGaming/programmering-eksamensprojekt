@@ -17,7 +17,7 @@ import (
 	"github.com/ViggoGaming/kantine/backend/model"
 )
 
-// Get All Foods from db
+// Get All Foods from database
 func GetAllFoods(c *fiber.Ctx) error {
 
 	db := database.DB.Db
@@ -159,7 +159,7 @@ func CreateMenu(c *fiber.Ctx) error {
 	}
 
 	food := new(model.Food)
-	result := db.First(food, menu.Food.ID)
+	result := db.First(food, menu.FoodID)
 	if result.Error != nil {
 		return result.Error
 	}
