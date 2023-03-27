@@ -25,12 +25,5 @@ type WeeklyMenu struct {
 	//FoodID Food `json:"foodid" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;foreignKey:FoodID;"`
 }
 
-// Menu struct
-/*
-type WeeklyMenu2 struct {
-	ID         uint   `json:"id" gorm:"primarykey"`
-	DayOfWeek  string `json:"dayofweek"`
-	WeekNumber int    `json:"weeknumber"`
-	Food       Food   `json:"foods" gorm:"foreignKey:ID"`
+type User struct {
 }
-*/

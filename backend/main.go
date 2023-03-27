@@ -19,6 +19,6 @@ func main() {
 			"error": "Unavailable route",
 		})
 	})
-	app.Listen(":3000")
+	app.Listen("0.0.0.0:3000")
 
 }
