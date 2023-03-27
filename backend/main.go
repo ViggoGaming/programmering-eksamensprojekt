@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/ViggoGaming/kantine/backend/database"
 	"github.com/ViggoGaming/kantine/backend/router"
 	"github.com/gofiber/fiber/v2"
@@ -19,6 +21,11 @@ func main() {
 			"error": "Unavailable route",
 		})
 	})
-	app.Listen(":8080")
 
+	// start server
+	var port string
+	if port = os.Getenv("PORT"); port == "" {
+		port = "8080"
+	}
+	app.Listen(":" + port)
 }
