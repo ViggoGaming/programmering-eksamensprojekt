@@ -8,6 +8,7 @@ import App from './App'
 
 function Header() {
     return (
+        <div className="sticky-top"> {/* Add a wrapper div with the sticky-top class */}
             <Navbar bg="light" expand="lg">
                 <Container>
                     <Navbar.Brand href="/">
@@ -24,11 +25,12 @@ function Header() {
                         <Nav className="me-auto">
                             <Nav.Link as={Link} to={"/"}>Hjem</Nav.Link>
                             <Nav.Link as={Link} to={"/"}>Ugensmenu</Nav.Link>
-                            <Nav.Link as={Link} to={"/add"}>tilføj</Nav.Link>
+                            <Nav.Link as={Link} to={"/add"}>Tilføj</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
+        </div>
     );
 }
 
