@@ -17,7 +17,7 @@ func SetupRoutes(app *fiber.App) {
 	food.Get("/:id", handler.GetSingleFood)
 	food.Post("/", handler.CreateFood)
 	food.Post("/upload", handler.UploadImage)
-	//v1.Put("/:id", handler.UpdateUser)
+	food.Put("/:id", handler.UpdateFood)
 	food.Delete("/:id", handler.DeleteFood)
 	food.Delete("/", handler.DeleteTable)
 

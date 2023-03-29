@@ -18,15 +18,15 @@ import (
 )
 
 // Get All Foods from database
+// Get All Foods from database
 func GetAllFoods(c *fiber.Ctx) error {
-
 	db := database.DB.Db
 	var foods []model.Food
 
-	// find all users in the database
-	db.Find(&foods)
+	// find all foods in the database and order by ID
+	db.Order("id").Find(&foods)
 
-	// If no user found, return an error
+	// If no food found, return an error
 	if len(foods) == 0 {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error": "Food was not found",
@@ -173,6 +173,35 @@ func CreateMenu(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"success": "Menu was created",
 		"data":    menu,
+	})
+}
+
+func UpdateFood(c *fiber.Ctx) error {
+	db := database.DB.Db
+	food := new(model.Food)
+	id := c.Params("id")
+
+	if err := db.Where("id = ?", id).First(&food).Error; err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Food not found",
+		})
+	}
+
+	if err := c.BodyParser(&food); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid json data",
+		})
+	}
+
+	if err := db.Save(&food).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Could not update food",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": "Food has been updated",
+		"data":    food,
 	})
 }
 
