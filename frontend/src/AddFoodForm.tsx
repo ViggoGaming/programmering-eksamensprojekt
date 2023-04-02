@@ -8,37 +8,64 @@ import EditFood from './EditFoods'
 function AddFoodForm() {
   const [hidden, setHidden] = useState(false);
 
-  const onFormSubmit = e => {
-    e.preventDefault()
-    const formData = new FormData(e.target),
-      formDataObj = Object.fromEntries(formData.entries())
+  /*  const onFormSubmit = e => {
+      e.preventDefault()
+      const formData = new FormData(e.target),
+        formDataObj = Object.fromEntries(formData.entries())
+  
+      const body = new FormData
+      body.append("name", formDataObj.name)
+      body.append("description", formDataObj.description)
+      body.append("price", formDataObj.price)
+      body.append("file", formDataObj.file)
+  
+      fetch("https://programmering-eksamensprojekt-production.up.railway.app/api/food", {
+        body: body,
+        headers: {
+          "Accept": "application/json",
+          //        "Content-Type": "multipart/form-data"
+        },
+        method: "POST"
+      })
+    }*/
 
-    const body = new FormData
-    body.append("name", formDataObj.name)
-    body.append("description", formDataObj.description)
-    body.append("price", formDataObj.price)
-    body.append("file", formDataObj.file)
 
-    fetch("http://localhost:8000/api/foods/", {
-      body: body,
+  const onFormSubmit = (event) => {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+
+    fetch('https://programmering-eksamensprojekt-production.up.railway.app/api/food/upload', {
+      method: 'POST',
+      body: formData,
       headers: {
-        "Accept": "application/json",
-        //        "Content-Type": "multipart/form-data"
-      },
-      method: "POST"
+        "Content-Type": "multipart/form-data"
+
+      }
     })
-  }
+      .then((response) => {
+        console.log('Request sent.');
+        console.log(response)
+        // handle response
+      })
+      .catch((error) => {
+        console.error(error);
+        // handle error
+      });
+  };
+
 
   return (
     <div>
       <div className="info">
-      <Card style={{ width: '18rem' }}>
-        <Card.Body>
-          <Card.Title>Administrationspanel</Card.Title>
-          <Card.Text>Dette er et administrationspanel for kantinemedarbejderne, så de kan tilføje nye mad retter til menuen😋
-          </Card.Text>
-        </Card.Body>
-      </Card>
+        <Card style={{ width: '18rem' }}>
+          <Card.Body>
+            <Card.Title>Administrationspanel</Card.Title>
+            <Card.Text>Dette er et administrationspanel for kantinemedarbejderne, så de kan tilføje nye mad retter til menuen😋
+            </Card.Text>
+          </Card.Body>
+        </Card>
       </div>
       <div className="form">
         <Form onSubmit={onFormSubmit}>
@@ -69,7 +96,7 @@ function AddFoodForm() {
           </Toast>
         </ToastContainer>
       </div>
-<EditFood />
+      <EditFood />
     </div>
 
   );

@@ -25,5 +25,8 @@ type WeeklyMenu struct {
 	//FoodID Food `json:"foodid" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;foreignKey:FoodID;"`
 }
 
+// User represents a user account
 type User struct {
+	Email    string `json:"email" gorm:"uniqueIndex"`
+	Password string `json:"password"`
 }

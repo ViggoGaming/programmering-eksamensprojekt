@@ -14,10 +14,17 @@ func main() {
 	app := fiber.New()
 	app.Use(cors.New())
 	router.SetupRoutes(app)
+
+	// health check route
+	app.Get("/health", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"status": "ok",
+		})
+	})
+
 	// handle unavailable route
 	app.Use(func(c *fiber.Ctx) error {
-		//return c.SendStatus(404) // => 404 "Not Found"
-		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error": "Unavailable route",
 		})
 	})

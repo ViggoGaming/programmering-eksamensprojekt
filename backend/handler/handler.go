@@ -4,20 +4,23 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 
+	"github.com/ViggoGaming/kantine/backend/configs"
 	"github.com/ViggoGaming/kantine/backend/database"
 	"github.com/ViggoGaming/kantine/backend/model"
 )
 
-// Get All Foods from database
 // Get All Foods from database
 func GetAllFoods(c *fiber.Ctx) error {
 	db := database.DB.Db
@@ -245,8 +248,6 @@ func DeleteFood(c *fiber.Ctx) error {
 		return err
 	}
 
-	fmt.Println(result)
-
 	// Delete database record
 	db.Delete(&food, id)
 
@@ -303,4 +304,196 @@ func DeleteTable(c *fiber.Ctx) error {
 		"success": "Deleted everything in the PostgreSQL database",
 	})
 
+}
+
+// add signup handler
+func SignUp(c *fiber.Ctx) error {
+	// parse request body into a struct
+	var user model.User
+	if err := c.BodyParser(&user); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid json data",
+		})
+	}
+
+	// check if the email already exists
+	db := database.DB.Db
+	var existingUser model.User
+	if err := db.Where("email = ?", user.Email).First(&existingUser).Error; err == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Email already exists",
+		})
+	}
+
+	// hash user password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Could not hash password",
+		})
+	}
+
+	// create user record
+	newUser := &model.User{
+		Email:    user.Email,
+		Password: string(hashedPassword),
+	}
+
+	if err := db.Create(newUser).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Could not create user, database error",
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": "User created successfully",
+	})
+}
+
+// create a SignIn handler function
+// SignIn verifies user credentials and generates a jwt token
+func SignIn(c *fiber.Ctx) error {
+	// parse request body into a struct
+	var user model.User
+	if err := c.BodyParser(&user); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+
+	// retrieve user record
+	db := database.DB.Db
+
+	var existingUser model.User
+
+	if err := db.Where(&model.User{Email: user.Email}).First(&existingUser).Error; err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Invalid credentials",
+		})
+	}
+
+	// compare passwords
+	if err := bcrypt.CompareHashAndPassword([]byte(existingUser.Password), []byte(user.Password)); err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Invalid credentials",
+		})
+	}
+
+	// generate jwt token
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["email"] = existingUser.Email
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	tokenSigned, err := token.SignedString([]byte(configs.Config("JWT_SECRET")))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Could not generate token",
+		})
+	}
+
+	cookie := fiber.Cookie{
+		Name:     "jwt",
+		Value:    tokenSigned,
+		Expires:  time.Now().Add(time.Hour * 24),
+		HTTPOnly: true,
+	}
+
+	c.Cookie(&cookie)
+
+	return c.JSON(fiber.Map{
+		"message": "success",
+	})
+}
+
+func SignOut(c *fiber.Ctx) error {
+	cookie := fiber.Cookie{
+		Name:     "jwt",
+		Value:    "",
+		Expires:  time.Now().Add(-time.Hour * 24),
+		HTTPOnly: true,
+	}
+
+	c.Cookie(&cookie)
+
+	return c.JSON(fiber.Map{
+		"message": "Successfully signed out",
+	})
+}
+
+// create a CurrentUser handler function
+func CurrentUser(c *fiber.Ctx) error {
+	// get jwt token from cookie
+	cookie := c.Cookies("jwt")
+	if cookie == "" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
+
+	// parse jwt token
+	token, err := jwt.Parse(cookie, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("invalid token signing method")
+		}
+		return []byte(configs.Config("JWT_SECRET")), nil
+	})
+
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
+
+	// extract email claim from token
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
+
+	email, ok := claims["email"].(string)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"email": email,
+	})
+}
+
+func RequireAdminEmail() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		// Check if the user is authenticated
+		tokenString := c.Cookies("jwt")
+		if tokenString == "" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Unauthorized",
+			})
+		}
+
+		// Parse the JWT token
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			// Return the secret key
+			return []byte(configs.Config("JWT_SECRET")), nil
+		})
+		if err != nil {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Unauthorized",
+			})
+		}
+
+		// Check if the user has the required email
+		email := token.Claims.(jwt.MapClaims)["email"].(string)
+		if email != configs.Config("ADMIN_EMAIL") {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"error": "Forbidden",
+			})
+		}
+
+		// User is authenticated and has the required email, pass control to the next handler
+		return c.Next()
+	}
 }

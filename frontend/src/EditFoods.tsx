@@ -8,21 +8,24 @@ function Food() {
   const [foodResults, setFoodResults] = useState([0]);
 
   async function fetchFoods() {
-    const url = "http://localhost:8000/api/foods";
+    const url = "https://programmering-eksamensprojekt-production.up.railway.app/api/food";
     const response = await fetch(url);
     const data = await response.json();
-    setFoodResults(data)
+    const foods = data["data"]
+    setFoodResults(foods)
 
   }
 
   async function deleteFood(id: number) {
-    fetch(`http://localhost:8000/api/foods/${id}/`, {
+    const response = await fetch(`https://programmering-eksamensprojekt-production.up.railway.app/api/food/${id}/`, {
       headers: {
         Accept: "application/json"
       },
       method: "DELETE"
     })
-    fetchFoods()
+    if (response.ok) {
+      setFoodResults(foodResults.filter(food => food["id"] !== id))
+    }
   }
 
   useEffect(() => {
