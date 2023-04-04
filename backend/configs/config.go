@@ -16,7 +16,7 @@ func Config(key string) string {
 		fmt.Print("Error loading env")
 	}
 
-	godotenv.Load(".env")
+	godotenv.Load("../.env")
 	if err != nil {
 		fmt.Print("Error loading .env file")
 	}

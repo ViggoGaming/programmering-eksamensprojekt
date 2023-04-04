@@ -24,8 +24,9 @@ function Header() {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <Nav.Link as={Link} to={"/"}>Hjem</Nav.Link>
-                            <Nav.Link as={Link} to={"/"}>Ugensmenu</Nav.Link>
+                            <Nav.Link as={Link} to={"/menus"}>Ugensmenu</Nav.Link>
                             <Nav.Link as={Link} to={"/add"}>Tilføj</Nav.Link>
+                            <Nav.Link as={Link} to={"/user"}>Bruger</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

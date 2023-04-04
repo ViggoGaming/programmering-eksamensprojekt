@@ -21,7 +21,7 @@ func SetupRoutes(app *fiber.App) {
 	food.Delete("/:id", handler.RequireAdminEmail(), handler.DeleteFood)
 	food.Delete("/", handler.RequireAdminEmail(), handler.DeleteTable)
 
-	menu.Get("/", handler.GetAllMenus)
+	menu.Get("/:id", handler.GetWeeklyMenu)
 	menu.Post("/", handler.RequireAdminEmail(), handler.CreateMenu)
 
 	// add a user route for sign in, sign up, sign out

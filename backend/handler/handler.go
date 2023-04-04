@@ -66,18 +66,45 @@ func GetAllMenus(c *fiber.Ctx) error {
 }
 */
 
-func GetAllMenus(c *fiber.Ctx) error {
+func GetWeeklyMenu(c *fiber.Ctx) error {
 	db := database.DB.Db
 	menus := []model.WeeklyMenu{}
+	weekNumber := c.Params("id")
 
-	if err := db.Preload("Food").Find(&menus).Error; err != nil {
-		return err
+	db.Preload("Food").Where("week_number = ?", weekNumber).Find(&menus)
+
+	// If no food found, return an error
+	if len(menus) == 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "No weekly menu was found",
+		})
 	}
+	/*
+		// Define the order of weekdays
+		weekdayOrder := []string{"Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"}
 
-	return c.JSON(fiber.Map{
-		"success": "Menus were found",
+		// Sort menus slice by weekday
+		sort.Slice(menus, func(i, j int) bool {
+			iWeekdayIndex := indexOf(weekdayOrder, menus[i].DayOfWeek)
+			jWeekdayIndex := indexOf(weekdayOrder, menus[j].DayOfWeek)
+			return iWeekdayIndex < jWeekdayIndex
+		})
+	*/
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": "Weekly menu was found",
 		"data":    menus,
 	})
+}
+
+// Helper function to get the index of a string in a slice
+func indexOf(slice []string, str string) int {
+	for i, s := range slice {
+		if s == str {
+			return i
+		}
+	}
+	return -1
 }
 
 func GetSingleFood(c *fiber.Ctx) error {
@@ -170,7 +197,9 @@ func CreateMenu(c *fiber.Ctx) error {
 	menu.Food = *food
 
 	if err := db.Create(menu).Error; err != nil {
-		return err
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "There can only be one food a day",
+		})
 	}
 
 	return c.JSON(fiber.Map{
@@ -333,10 +362,12 @@ func SignUp(c *fiber.Ctx) error {
 		})
 	}
 
-	// create user record
+	isAdmin := user.Email == configs.Config("ADMIN_EMAIL")
+
 	newUser := &model.User{
 		Email:    user.Email,
 		Password: string(hashedPassword),
+		Admin:    isAdmin,
 	}
 
 	if err := db.Create(newUser).Error; err != nil {
@@ -459,9 +490,24 @@ func CurrentUser(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(fiber.Map{
-		"email": email,
-	})
+	// retrieve user record
+	db := database.DB.Db
+
+	var user model.User
+	if err := db.Where(&model.User{Email: email}).First(&user).Error; err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Email does not exist",
+		})
+	}
+
+	// Create the response object
+	currentUser := model.CurrentUser{
+		Email: user.Email,
+		Admin: user.Admin,
+	}
+
+	return c.JSON(currentUser)
+
 }
 
 func RequireAdminEmail() fiber.Handler {

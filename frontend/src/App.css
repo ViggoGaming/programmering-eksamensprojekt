@@ -97,3 +97,8 @@ h2, h5 {
   margin-right: 20%;
   margin-top: 20px;
 }
+
+.form-container {
+  width: 400px;
+  margin: 0 auto;
+}

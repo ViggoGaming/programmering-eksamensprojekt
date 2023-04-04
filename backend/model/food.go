@@ -13,20 +13,21 @@ type Food struct {
 // Menu struct
 type WeeklyMenu struct {
 	ID         uint   `json:"id" gorm:"primarykey"`
-	DayOfWeek  string `json:"dayofweek"`
+	DayOfWeek  string `json:"dayofweek" gorm:"uniqueIndex"`
 	WeekNumber int    `json:"weeknumber"`
 	Food       Food   `json:"food" gorm:"foreignkey:FoodID"`
 	FoodID     uint   `json:"foodid"`
-
-	//	FoodID     uint   `json:"foodid"`
-	//Food       Food   `json:"food" gorm:"foreignKey:ID"`
-	//Food       Food   `json:"foodid" gorm:"foreignKey:FoodRefer"`
-	//FoodID     Food   `json:"foodid" gorm:"foreignKey:Food.ID"`
-	//FoodID Food `json:"foodid" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;foreignKey:FoodID;"`
 }
 
 // User represents a user account
 type User struct {
 	Email    string `json:"email" gorm:"uniqueIndex"`
 	Password string `json:"password"`
+	Admin    bool   `json:"admin"`
+}
+
+// CurrentUser represents a logged in user
+type CurrentUser struct {
+	Email string `json:"email" gorm:"uniqueIndex"`
+	Admin bool   `json:"admin"`
 }

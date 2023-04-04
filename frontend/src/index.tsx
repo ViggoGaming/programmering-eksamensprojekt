@@ -9,6 +9,10 @@ import {
 } from "react-router-dom";
 
 import AddFoods from "./AddFoods";
+import Menu from "./Menus";
+
+import User from "./User";
+
 import App from "./App";
 
 const root = ReactDOM.createRoot(
@@ -20,6 +24,9 @@ root.render(
     <Routes>
       <Route path="/" element={<App />} />
       <Route path="add" element={<AddFoods />} />
+      <Route path="menus" element={<Menu />} />
+      <Route path="user" element={<User />} />
+
     </Routes>
   </BrowserRouter>
   </React.StrictMode>

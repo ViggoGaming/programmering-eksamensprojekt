@@ -1,16 +1,37 @@
-import React from 'react';
-//import './App.css';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter } from "react-router-dom";
-
 import AddFoodForm from './AddFoodForm';
-import Header from './Header'
+import Header from './Header';
+import env from "react-dotenv";
 
 function AddFoods() {
+  const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch(`${env.BACKEND_URL}/api/user/`, { credentials: 'include' })
+      .then(response => response.json())
+      .then(data => {
+        if (data.admin) {
+          setIsAdmin(true);
+        } else {
+          navigate('/user');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+      });
+  }, [navigate]);
+
   return (
     <div>
-    <Header />
-    <AddFoodForm />
+      <Header />
+      {isAdmin ? (
+        <div>
+          <AddFoodForm />
+        </div>
+      ) : null}
     </div>
   );
 }

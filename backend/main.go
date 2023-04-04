@@ -12,7 +12,12 @@ import (
 func main() {
 	database.Connect()
 	app := fiber.New()
-	app.Use(cors.New())
+
+	// Setup cors so the backend can share cookies with the frontend
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     "http://localhost:3000",
+		AllowCredentials: true,
+	}))
 	router.SetupRoutes(app)
 
 	// health check route
