@@ -16,10 +16,8 @@ func SetupRoutes(app *fiber.App) {
 	food.Get("/", handler.GetAllFoods)
 	food.Get("/:id", handler.GetSingleFood)
 	food.Post("/", handler.RequireAdminEmail(), handler.CreateFood)
-	food.Post("/upload", handler.RequireAdminEmail(), handler.UploadImage)
 	food.Put("/:id", handler.RequireAdminEmail(), handler.UpdateFood)
 	food.Delete("/:id", handler.RequireAdminEmail(), handler.DeleteFood)
-	food.Delete("/", handler.RequireAdminEmail(), handler.DeleteTable)
 
 	menu.Get("/:id", handler.GetWeeklyMenu)
 	menu.Post("/", handler.RequireAdminEmail(), handler.CreateMenu)
@@ -30,5 +28,4 @@ func SetupRoutes(app *fiber.App) {
 	user.Post("/signup", handler.SignUp)
 	user.Post("/signin", handler.SignIn)
 	user.Post("/signout", handler.SignOut)
-
 }

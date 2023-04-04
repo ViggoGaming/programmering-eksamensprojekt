@@ -133,14 +133,49 @@ func CreateFood(c *fiber.Ctx) error {
 	db := database.DB.Db
 	food := new(model.Food)
 
+	// Parse JSON data from request body
 	if err := c.BodyParser(food); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Invalid json data",
 		})
 	}
 
-	err := db.Create(&food).Error
+	// Upload image file to S3
+	file, err := c.FormFile("image")
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Could not upload image",
+		})
+	}
+	cfg, err := config.LoadDefaultConfig(context.Background())
+	if err != nil {
+		return err
+	}
+	client := s3.NewFromConfig(cfg)
+	f, err := file.Open()
+	if err != nil {
+		return err
+	}
+	extension := filepath.Ext(file.Filename)
+	newFileName := uuid.New().String() + extension
+	uploader := manager.NewUploader(client)
+	result, err := uploader.Upload(context.Background(), &s3.PutObjectInput{
+		Bucket: aws.String("kantine-it-system"),
+		Key:    aws.String(newFileName),
+		Body:   f,
+		ACL:    "public-read",
+	})
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Could not upload image",
+		})
+	}
 
+	// Set image URL in the `Food` object
+	food.Image = result.Location
+
+	// Create `Food` object in the database
+	err = db.Create(&food).Error
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Could not create food",
@@ -151,7 +186,6 @@ func CreateFood(c *fiber.Ctx) error {
 		"success": "Food has been created",
 		"data":    food,
 	})
-
 }
 
 /*
@@ -282,55 +316,6 @@ func DeleteFood(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": "Food of " + id + " has been deleted",
-	})
-
-}
-
-func UploadImage(c *fiber.Ctx) error {
-
-	file, err := c.FormFile("image")
-
-	if err != nil {
-		return err
-	}
-
-	cfg, err := config.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		return err
-	}
-
-	client := s3.NewFromConfig(cfg)
-
-	// Open file
-	f, err := file.Open()
-
-	if err != nil {
-		return err
-	}
-
-	extension := filepath.Ext(file.Filename)
-	newFileName := uuid.New().String() + extension
-
-	uploader := manager.NewUploader(client)
-	result, err := uploader.Upload(context.TODO(), &s3.PutObjectInput{
-		Bucket: aws.String("kantine-it-system"),
-		Key:    aws.String(newFileName),
-		Body:   f,
-		ACL:    "public-read",
-	})
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": result.Location,
-	})
-}
-
-func DeleteTable(c *fiber.Ctx) error {
-	db := database.DB.Db
-	var food model.Food
-	db.Where("1 = 1").Delete(&food)
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": "Deleted everything in the PostgreSQL database",
 	})
 
 }
