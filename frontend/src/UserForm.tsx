@@ -45,8 +45,8 @@ function UserForm() {
       const response = await axios.post(`${env.REACT_APP_BACKEND_URL}/api/user/signin`, user, { withCredentials: true });
       if (response.status === 200) {
         setLoggedInUser(user.email);
-        checkLoggedInUser();
         setUser({ email: '', password: '' });
+        checkLoggedInUser();
       }
     } catch (error) {
       console.log(error);

@@ -5,7 +5,7 @@ window.env = {
   "npm_config_userconfig": "/home/viggo/.npmrc",
   "npm_config_cache": "/home/viggo/.npm",
   "TERM_PROGRAM_VERSION": "3.3a",
-  "TMUX": "/tmp/tmux-1000/default,3672,0",
+  "TMUX": "/tmp/tmux-1000/default,46344,0",
   "NODE": "/usr/bin/node",
   "GRADLE_HOME": "/usr/share/java/gradle",
   "COLOR": "1",
@@ -62,6 +62,5 @@ window.env = {
   "MAIL": "/var/spool/mail/viggo",
   "npm_node_execpath": "/usr/bin/node",
   "OLDPWD": "/home/viggo/Documents/dev/golang/kantine",
-  "TERM_PROGRAM": "tmux",
-  "REACT_APP_BACKEND_URL": "https://programmering-eksamensprojekt-production.up.railway.app"
+  "TERM_PROGRAM": "tmux"
 };
