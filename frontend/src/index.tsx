@@ -10,6 +10,7 @@ import {
 
 import AddFoods from "./AddFoods";
 import Menu from "./Menus";
+import EditFoodForm from './EditFoodForm';
 
 import User from "./User";
 
@@ -21,14 +22,14 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<App />} />
-      <Route path="add" element={<AddFoods />} />
-      <Route path="menus" element={<Menu />} />
-      <Route path="user" element={<User />} />
-
-    </Routes>
-  </BrowserRouter>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="add" element={<AddFoods />} />
+        <Route path="menus" element={<Menu />} />
+        <Route path="user" element={<User />} />
+        <Route path="/food/edit/:id" Component={EditFoodForm} />
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );
 

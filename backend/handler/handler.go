@@ -173,6 +173,7 @@ func CreateFood(c *fiber.Ctx) error {
 
 	// Set image URL in the `Food` object
 	food.Image = result.Location
+	food.Visible = true
 
 	// Create `Food` object in the database
 	err = db.Create(&food).Error
@@ -334,7 +335,7 @@ func SignUp(c *fiber.Ctx) error {
 	db := database.DB.Db
 	var existingUser model.User
 	if err := db.Where("email = ?", user.Email).First(&existingUser).Error; err == nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
 			"error": "Email already exists",
 		})
 	}

@@ -4,43 +4,42 @@ import Swal from 'sweetalert2';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import EditFood from './EditFoods';
 import env from 'react-dotenv';
+import axios from 'axios';
+
 
 function AddFoodForm() {
   const [hidden, setHidden] = useState(false);
 
-  const onFormSubmit = (event) => {
+  const onFormSubmit = async (event) => {
     event.preventDefault();
 
     const form = event.target;
     const formData = new FormData(form);
 
-    fetch(`${env.BACKEND_URL}/api/food/upload`, {
-      credentials: 'include',
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-      .then((response) => {
-        console.log('Request sent.');
-        console.log(response);
-        Swal.fire({
-          icon: 'success',
-          title: 'Succes!',
-          text: 'Retten er netop tilføjet'
-        });
-        // handle response
-      })
-      .catch((error) => {
-        console.error(error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Fejl',
-          text: 'Der opstod en fejl ved tilføjelse af retten'
-        });
-        // handle error
+    try {
+      const response = await axios.post(`${env.BACKEND_URL}/api/food/`, formData, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Succes!',
+        text: 'Retten er netop tilføjet'
+      });
+      // handle response
+    } catch (error) {
+      console.error(error);
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Fejl',
+        text: 'Der opstod en fejl ved tilføjelse af retten'
+      });
+      // handle error
+    }
   };
 
   return (
@@ -70,7 +69,7 @@ function AddFoodForm() {
           <br />
           <Form.Group controlId='formFile' className='mb-3'>
             <Form.Label>Vælg billede</Form.Label>
-            <Form.Control name='file' type='file' />
+            <Form.Control name='image' type='file' />
           </Form.Group>
           <br />
           <div className='d-grid gap-2'>

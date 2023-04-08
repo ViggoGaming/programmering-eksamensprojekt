@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import { Table, Button } from 'react-bootstrap';
-import EditFood_card from './EditFood.component';
-import './App.css'
+import './App.css';
 import Swal from 'sweetalert2';
 import env from "react-dotenv";
+import { Link, Router } from "react-router-dom";
+
 
 function Food() {
-
-  const [foodResults, setFoodResults] = useState([0]);
+  const [foodResults, setFoodResults] = useState([]);
 
   async function fetchFoods() {
-    const url = `${env.BACKEND_URL}/api/food`;
-    const response = await fetch(url);
-    const data = await response.json();
-    const foods = data["data"]
-    setFoodResults(foods)
-
+    try {
+      const url = `${env.BACKEND_URL}/api/food`;
+      const response = await fetch(url);
+      const data = await response.json();
+      const foods = data["data"]
+      setFoodResults(foods)
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async function deleteFood(id: number) {
@@ -29,7 +32,7 @@ function Food() {
       confirmButtonText: 'Ja, slet den!',
       cancelButtonText: 'Annuller'
     });
-    
+
     if (result.isConfirmed) {
       const response = await fetch(`${env.BACKEND_URL}/api/food/${id}/`, {
         credentials: 'include',
@@ -38,7 +41,7 @@ function Food() {
         },
         method: "DELETE"
       })
-      
+
       if (response.ok) {
         setFoodResults(foodResults.filter(food => food["id"] !== id))
       }
@@ -49,35 +52,45 @@ function Food() {
     fetchFoods()
   }, [])
 
+
   return (
     <div className="edit-foods">
-
-      <Table striped bordered hover size="sm">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Navn</th>
-            <th>Beskrivelse</th>
-            <th>Pris</th>
-            <th>Billede</th>
-            <th>Handling</th>
-          </tr>
-        </thead>
-        {foodResults.map((food, index) => (
-          <tbody key={index}>
+      {foodResults && foodResults.length > 0 ? (
+        <Table striped bordered hover size="sm">
+          <thead>
             <tr>
-              <td>{food['id']}</td>
-              <td>{food['name']}</td>
-              <td>{food['description'] ? food['description'] : 'Ikke opgivet'}</td>
-              <td>{food['price']}</td>
-              <td>{food['image']}</td>
-              <td><Button onClick={() => deleteFood(food['id'])} variant="danger">Slet</Button></td>
+              <th>ID</th>
+              <th>Navn</th>
+              <th>Synlig</th>
+              <th>Beskrivelse</th>
+              <th>Pris</th>
+              <th>Billede</th>
+              <th>Handling</th>
             </tr>
-          </tbody>
-        ))}
-      </Table>
+          </thead>
+          {foodResults.map((food, index) => (
+            <tbody key={index}>
+              <tr>
+                <td>{food['id']}</td>
+                <td>{food['name']}</td>
+                <td>{food['visible'] ? 'Ja' : 'Nej'}</td>
+                <td>{food['description'] ? food['description'] : 'Ikke opgivet'}</td>
+                <td>{food['price']}</td>
+                <td>{food['image']}</td>
+                <td>
+                  <Button onClick={() => deleteFood(food['id'])} variant="danger">Slet</Button>
+                  <Link to={`/food/edit/${food['id']}`}>
+                    <Button variant="primary">Rediger</Button>
+                  </Link>
+                </td>
+              </tr>
+            </tbody>
+          ))}
+        </Table>
+      ) : (
+        <p>Der er ingen mad retter i databasen</p>
+      )}
     </div>
-
   );
 }
 

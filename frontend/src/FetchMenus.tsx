@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Container, Row, Col, Form, Alert } from 'react-bootstrap';
 import Menu_card from './Menu.component';
 import './App.css'
 
@@ -14,7 +15,6 @@ type MenuData = {
     price: number;
     visible: boolean;
   };
-  foodid: number;
 };
 
 function Menu() {
@@ -53,30 +53,68 @@ function Menu() {
   };
 
   return (
-    <>
-      <h1>WEEKLY MENUS</h1>
-      <div>
-        <label htmlFor="week-number-select">Select week number:</label>
-        <select id="week-number-select" onChange={handleWeekNumberChange}>
-          <option value="0">Choose a week</option>
-          {[...Array(52)].map((_, index) => (
-            <option key={index} value={index + 1}>
-              Week {index + 1}
-            </option>
-          ))}
-        </select>
-      </div>
-      {isLoading && <p>Loading...</p>}
-      {errorMessage && <p>{errorMessage}</p>}
-      {!isLoading && !errorMessage && menuData.length === 0 && <p>No weekly menu was found</p>}
-      {!isLoading && !errorMessage && menuData.length > 0 && (
-        <div className="menu-container">
-          {menuData.map((menu) => (
-            <Menu_card name={menu["food"]["name"]} day={menu["dayofweek"]} description={menu["food"]["description"]} image={menu["food"]["image"]} price={menu["food"]["price"]}/>
-          ))}
-        </div>
+    <Container>
+      <Row>
+        <Col>
+          <h1>Ugens menu</h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Form>
+            <Form.Label htmlFor="week-number-select">Vælg hvilken uge du vil se</Form.Label>
+            <Form.Select
+              id="week-number-select"
+              onChange={handleWeekNumberChange}
+              className="w-auto"
+            >
+              <option value="0">Vælg uge</option>
+              {[...Array(52)].map((_, index) => (
+                <option key={index} value={index + 1}>
+                  Week {index + 1}
+                </option>
+              ))}
+            </Form.Select>
+          </Form>
+        </Col>
+      </Row>
+      {isLoading && (
+        <Row>
+          <Col>
+            <p>Loading...</p>
+          </Col>
+        </Row>
       )}
-    </>
+      {errorMessage && (
+        <Row>
+          <Col>
+            <Alert variant="danger">{errorMessage}</Alert>
+          </Col>
+        </Row>
+      )}
+      {!isLoading && !errorMessage && menuData.length === 0 && (
+        <Row>
+          <Col>
+            <p>Ingen menu fundet denne uge</p>
+          </Col>
+        </Row>
+      )}
+      {!isLoading && !errorMessage && menuData.length > 0 && (
+        <Row className="menu-container">
+          {menuData.map((menu) => (
+            <Col xs={12} sm={8} md={4} key={menu["food"]["id"]}>
+              <Menu_card
+                name={menu["food"]["name"]}
+                day={menu["dayofweek"]}
+                description={menu["food"]["description"]}
+                image={menu["food"]["image"]}
+                price={menu["food"]["price"]}
+              />
+            </Col>
+          ))}
+        </Row>
+      )}
+    </Container>
   );
 }
 

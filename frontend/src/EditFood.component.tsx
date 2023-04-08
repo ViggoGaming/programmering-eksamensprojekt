@@ -12,6 +12,7 @@ function EditFood_card(props: any) {
                         <th>description</th>
                         <th>price</th>
                         <th>image</th>
+                        <th>visible</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -21,6 +22,7 @@ function EditFood_card(props: any) {
                         <td>{props.description}</td>
                         <td>{props.image}</td>
                         <td>{props.price}</td>
+                        <td>{props.visible}</td>
                     </tr>
                 </tbody>
             </Table>

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Tabs, Tab } from 'react-bootstrap';
 import axios from 'axios';
 import env from "react-dotenv";
+import { FaUser, FaLock } from 'react-icons/fa';
+import Swal from 'sweetalert2';
+import './App.css';
 
 interface User {
   email: string;
@@ -13,21 +16,20 @@ function UserForm() {
   const [loggedInUser, setLoggedInUser] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
-  useEffect(() => {
-    // Check if user is already logged in
-    const checkLoggedInUser = async () => {
-      try {
-        const response = await axios.get(`${env.BACKEND_URL}/api/user`, { withCredentials: true });
-        if (response.status === 200) {
-          setLoggedInUser(response.data.email);
-          setIsAdmin(response.data.admin);
-        }
-      } catch (error) {
-        console.log(error);
+  const checkLoggedInUser = async () => {
+    try {
+      const response = await axios.get(`${env.BACKEND_URL}/api/user`, { withCredentials: true });
+      if (response.status === 200) {
+        setLoggedInUser(response.data.email);
+        setIsAdmin(response.data.admin);
       }
-    };
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-
+  // Call checkLoggedInUser in useEffect
+  useEffect(() => {
     checkLoggedInUser();
   }, []);
 
@@ -42,6 +44,7 @@ function UserForm() {
       const response = await axios.post(`${env.BACKEND_URL}/api/user/signin`, user, { withCredentials: true });
       if (response.status === 200) {
         setLoggedInUser(user.email);
+        checkLoggedInUser();
         setUser({ email: '', password: '' });
       }
     } catch (error) {
@@ -49,9 +52,48 @@ function UserForm() {
     }
   };
 
+  const handleSignUpSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      const response = await axios.post(`${env.BACKEND_URL}/api/user/signup`, user, { withCredentials: true });
+      if (response.status === 201) {
+
+        // Show success message
+        Swal.fire({
+          icon: 'success',
+          title: 'Oprettelsen lykkedes',
+          text: 'Du er nu oprettet.',
+          confirmButtonText: 'OK'
+        });
+      }
+    }
+    catch (error) {
+
+      // Check if the error response status is 409 (email already exists)
+      if (error.response && error.response.status === 409) {
+        // Show error message
+        Swal.fire({
+          icon: 'error',
+          title: 'Fejl under oprettelse',
+          text: 'Emailen findes allerede i databasen.',
+          confirmButtonText: 'OK'
+        });
+      } else {
+        // Show a generic error message
+        Swal.fire({
+          icon: 'error',
+          title: 'Fejl under oprettelse',
+          text: 'Der opstod en fejl under oprettelsen.',
+          confirmButtonText: 'OK'
+        });
+      }
+    }
+  };
+
+
   const handleSignOutSubmit = async () => {
     try {
-      const response = await axios.post(`${env.BACKEND_URL}/api/user/signout`, { withCredentials: true });
+      const response = await axios.post(`${env.BACKEND_URL}/api/user/signout`, {}, { withCredentials: true });
       if (response.status === 200) {
         setLoggedInUser(null);
       }
@@ -61,35 +103,57 @@ function UserForm() {
   };
 
   return (
-    <div>
+    <div className="user-form">
       {loggedInUser ? (
         <div>
-          <h3>Logged In User: {loggedInUser}</h3>
+          <h3>Email på bruger: {loggedInUser}</h3>
           <h3>Admin: {isAdmin ? "Ja" : "Nej"}</h3>
           <Button variant="primary" onClick={handleSignOutSubmit}>
-            Sign Out
+            Log ud
           </Button>
         </div>
       ) : (
         <div className="form-container">
-          <Form onSubmit={handleSignInSubmit}>
-            <Form.Group controlId="formBasicEmail">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control type="email" placeholder="Enter email" name="email" value={user.email} onChange={handleInputChange} />
-            </Form.Group>
-  
-            <Form.Group controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control type="password" placeholder="Password" name="password" value={user.password} onChange={handleInputChange} />
-            </Form.Group>
-  
-            <button className="btn btn-primary w-100" type="button">Login</button>
-          </Form>
+          <Tabs defaultActiveKey="login" className="mb-3">
+
+            <Tab eventKey="login" title="Login">
+              <h2 className="form-title">Login</h2>
+              <Form onSubmit={handleSignInSubmit} className="login-form">
+                <Form.Group controlId="formBasicEmail">
+                  <Form.Label><FaUser /> Email adresse</Form.Label>
+                  <Form.Control type="email" placeholder="Email adresse" name="email" value={user.email} onChange={handleInputChange} />
+                </Form.Group>
+
+                <Form.Group controlId="formBasicPassword">
+                  <Form.Label><FaLock /> Kodeord</Form.Label>
+                  <Form.Control type="password" placeholder="Kodeord" name="password" value={user.password} onChange={handleInputChange} />
+                </Form.Group>
+                <Button variant="primary" type="submit" className="w-100 login-btn">Login</Button>
+              </Form>
+            </Tab>
+
+            <Tab eventKey="signup" title="Sign Up">
+              <h2 className="form-title">Opret</h2>
+              <Form onSubmit={handleSignUpSubmit} className="signup-form">
+                <Form.Group controlId="formBasicEmail">
+                  <Form.Label><FaUser /> Email adresse</Form.Label>
+                  <Form.Control type="email" placeholder="Email adresse" name="email" value={user.email} onChange={handleInputChange} />
+                </Form.Group>
+
+                <Form.Group controlId="formBasicPassword">
+                  <Form.Label><FaLock /> Kodeord</Form.Label>
+                  <Form.Control type="password" placeholder="Kodeord" name="password" value={user.password} onChange={handleInputChange} />
+                </Form.Group>
+
+                <Button variant="primary" type="submit" className="w-100 signup-btn">Opret</Button>
+              </Form>
+            </Tab>
+
+          </Tabs>
         </div>
       )}
     </div>
   );
-  
 }
 
 export default UserForm;

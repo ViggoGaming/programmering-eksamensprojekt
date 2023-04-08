@@ -1,31 +1,45 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import Food_card from './Food.component';
-import './App.css'
+import './App.css';
+import env from 'react-dotenv';
+import axios from 'axios';
 
 function Food() {
-
   const [foodResults, setFoodResults] = useState([]);
 
   async function fetchFoods() {
-    const url = "https://programmering-eksamensprojekt-production.up.railway.app/api/food";
-    const response = await fetch(url);
-    const data = await response.json();
-    const foods = data["data"]
-    console.log(data)
-    setFoodResults(foods)
+    try {
+      const response = await axios.get(`${env.BACKEND_URL}/api/food`);
+      const foods = response.data.data;
+      setFoodResults(foods);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   useEffect(() => {
-    fetchFoods()
-  }, [])
+    fetchFoods();
+  }, []);
 
   return (
     <div className="cards">
-      {foodResults.map(food => (
-        food['visible'] === true && <Food_card name={food['name']} description={food['description']} image={food['image']} price={food['price']} />
-      ))}
+      {foodResults.length > 0 ? (
+        foodResults.map(
+          food =>
+            food['visible'] === true && (
+              <Food_card
+                key={food['_id']}
+                name={food['name']}
+                description={food['description']}
+                image={food['image']}
+                price={food['price']}
+              />
+            ),
+        )
+      ) : (
+        <p>Der er ingen mad retter i databasen</p>
+      )}
     </div>
-
   );
 }
 

@@ -13,7 +13,7 @@ type Food struct {
 // Menu struct
 type WeeklyMenu struct {
 	ID         uint   `json:"id" gorm:"primarykey"`
-	DayOfWeek  string `json:"dayofweek" gorm:"uniqueIndex"`
+	DayOfWeek  string `json:"dayofweek"`
 	WeekNumber int    `json:"weeknumber"`
 	Food       Food   `json:"food" gorm:"foreignkey:FoodID"`
 	FoodID     uint   `json:"foodid"`
