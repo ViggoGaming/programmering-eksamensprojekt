@@ -22,6 +22,7 @@ function UserForm() {
       if (response.status === 200) {
         setLoggedInUser(response.data.email);
         setIsAdmin(response.data.admin);
+        setUser({ email: '', password: '' });
       }
     } catch (error) {
       console.log(error);
