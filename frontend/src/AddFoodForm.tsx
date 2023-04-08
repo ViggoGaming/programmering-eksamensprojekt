@@ -17,7 +17,7 @@ function AddFoodForm() {
     const formData = new FormData(form);
 
     try {
-      const response = await axios.post(`${env.BACKEND_URL}/api/food/`, formData, {
+      const response = await axios.post(`${env.REACT_APP_BACKEND_URL}/api/food/`, formData, {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data'

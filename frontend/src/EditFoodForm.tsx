@@ -23,7 +23,7 @@ function EditFoodForm() {
     useEffect(() => {
         async function fetchFood() {
             try {
-                const response = await axios.get(`${env.BACKEND_URL}/api/food/${id}`, {
+                const response = await axios.get(`${env.REACT_APP_BACKEND_URL}/api/food/${id}`, {
                     withCredentials: true,
                 });
                 setFoodData(response.data["data"]);
@@ -39,7 +39,7 @@ function EditFoodForm() {
         event.preventDefault();
 
         try {
-            const response = await axios.put(`${env.BACKEND_URL}/api/food/${id}`, foodData, {
+            const response = await axios.put(`${env.REACT_APP_BACKEND_URL}/api/food/${id}`, foodData, {
                 withCredentials: true,
             });
 

@@ -63,5 +63,5 @@ window.env = {
   "npm_node_execpath": "/usr/bin/node",
   "OLDPWD": "/home/viggo/Documents/dev/golang/kantine",
   "TERM_PROGRAM": "tmux",
-  "BACKEND_URL": "http://localhost:8080"
+  "REACT_APP_BACKEND_URL": "http://localhost:8080"
 };

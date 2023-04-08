@@ -10,7 +10,7 @@ function AddFoods() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${env.BACKEND_URL}/api/user/`, { credentials: 'include' })
+    fetch(`${env.REACT_APP_BACKEND_URL}/api/user/`, { credentials: 'include' })
       .then(response => response.json())
       .then(data => {
         if (data.admin) {

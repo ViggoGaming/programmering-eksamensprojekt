@@ -11,7 +11,7 @@ function Food() {
 
   async function fetchFoods() {
     try {
-      const url = `${env.BACKEND_URL}/api/food`;
+      const url = `${env.REACT_APP_BACKEND_URL}/api/food`;
       const response = await fetch(url);
       const data = await response.json();
       const foods = data["data"]
@@ -34,7 +34,7 @@ function Food() {
     });
 
     if (result.isConfirmed) {
-      const response = await fetch(`${env.BACKEND_URL}/api/food/${id}/`, {
+      const response = await fetch(`${env.REACT_APP_BACKEND_URL}/api/food/${id}/`, {
         credentials: 'include',
         headers: {
           Accept: "application/json"
