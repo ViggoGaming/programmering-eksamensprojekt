@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AddFoodForm from './AddFoodForm';
 import Header from './Header';
-import env from "react-dotenv";
+const { REACT_APP_BACKEND_URL } = process.env
 
 function AddFoods() {
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${env.REACT_APP_BACKEND_URL}/api/user/`, { credentials: 'include' })
+    fetch(`${REACT_APP_BACKEND_URL}/api/user/`, { credentials: 'include' })
       .then(response => response.json())
       .then(data => {
         if (data.admin) {

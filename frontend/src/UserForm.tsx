@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Tabs, Tab } from 'react-bootstrap';
 import axios from 'axios';
-import env from "react-dotenv";
+const { REACT_APP_BACKEND_URL } = process.env
 import { FaUser, FaLock } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import './App.css';
@@ -18,7 +18,7 @@ function UserForm() {
 
   const checkLoggedInUser = async () => {
     try {
-      const response = await axios.get(`${env.REACT_APP_BACKEND_URL}/api/user`, { withCredentials: true });
+      const response = await axios.get(`${REACT_APP_BACKEND_URL}/api/user`, { withCredentials: true });
       if (response.status === 200) {
         setLoggedInUser(response.data.email);
         setIsAdmin(response.data.admin);
@@ -41,7 +41,7 @@ function UserForm() {
   const handleSignInSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const response = await axios.post(`${env.REACT_APP_BACKEND_URL}/api/user/signin`, user, { withCredentials: true });
+      const response = await axios.post(`${REACT_APP_BACKEND_URL}/api/user/signin`, user, { withCredentials: true });
       if (response.status === 200) {
         setLoggedInUser(user.email);
         checkLoggedInUser();
@@ -55,7 +55,7 @@ function UserForm() {
   const handleSignUpSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const response = await axios.post(`${env.REACT_APP_BACKEND_URL}/api/user/signup`, user, { withCredentials: true });
+      const response = await axios.post(`${REACT_APP_BACKEND_URL}/api/user/signup`, user, { withCredentials: true });
       if (response.status === 201) {
 
         // Show success message
@@ -93,7 +93,7 @@ function UserForm() {
 
   const handleSignOutSubmit = async () => {
     try {
-      const response = await axios.post(`${env.REACT_APP_BACKEND_URL}/api/user/signout`, {}, { withCredentials: true });
+      const response = await axios.post(`${REACT_APP_BACKEND_URL}/api/user/signout`, {}, { withCredentials: true });
       if (response.status === 200) {
         setLoggedInUser(null);
       }
