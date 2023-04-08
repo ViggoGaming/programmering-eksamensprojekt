@@ -133,7 +133,7 @@ function UserForm() {
               </Form>
             </Tab>
 
-            <Tab eventKey="signup" title="Sign Up">
+            <Tab eventKey="signup" title="Tilmeld">
               <h2 className="form-title">Opret</h2>
               <Form onSubmit={handleSignUpSubmit} className="signup-form">
                 <Form.Group controlId="formBasicEmail">
