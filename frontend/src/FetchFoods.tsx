@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import FoodCard from './Food.component';
-import { Container, Row } from 'react-bootstrap';
+import { Container, Row, Spinner } from 'react-bootstrap';
 import './App.css';
 import env from 'react-dotenv';
 import axios from 'axios';
 
 function Food() {
   const [foodResults, setFoodResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Add a state for managing loading status
 
   async function fetchFoods() {
     try {
@@ -15,6 +16,8 @@ function Food() {
       setFoodResults(foods);
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false); // Set isLoading to false when data is fetched
     }
   }
 
@@ -25,7 +28,14 @@ function Food() {
   return (
     <Container>
       <Row>
-        {foodResults.length > 0 ? (
+        {isLoading ? (
+          // Display spinner when isLoading is true
+          <div className="d-flex justify-content-center">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Indlæser...</span>
+            </Spinner>
+          </div>
+        ) : foodResults.length > 0 ? (
           foodResults.map(
             food =>
               food['visible'] === true && (
