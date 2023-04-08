@@ -9,7 +9,7 @@ function Food() {
 
   async function fetchFoods() {
     try {
-      const response = await axios.get(`${REACT_APP_BACKEND_URL}/api/food`);
+      const response = await axios.get(`${env.REACT_APP_BACKEND_URL}/api/food`);
       const foods = response.data.data;
       setFoodResults(foods);
     } catch (error) {

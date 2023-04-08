@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Container, Row, Col, Form, Alert } from 'react-bootstrap';
 import Menu_card from './Menu.component';
-const { REACT_APP_BACKEND_URL } = process.env
+import env from "react-dotenv";
 import './App.css'
 
 type MenuData = {
@@ -29,8 +29,7 @@ function Menu() {
       setIsLoading(true);
       setErrorMessage('');
       try {
-//        const response = await fetch(`${REACT_APP_BACKEND_URL}/api/menu/${weekNumber}`);
-        const response = await fetch(`https://programmering-eksamensprojekt-production.up.railway.app/api/menu/${weekNumber}`)
+        const response = await fetch(`${env.REACT_APP_BACKEND_URL}/api/menu/${weekNumber}`);
         const data = await response.json();
         if (response.ok) {
           setMenuData(data.data);
