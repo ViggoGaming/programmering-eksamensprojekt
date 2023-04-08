@@ -15,7 +15,7 @@ func main() {
 
 	// Setup cors so the backend can share cookies with the frontend
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "https://programmering-eksamensprojekt.vercel.app, https://programmering-eksamensprojekt-production.up.railway.app, http://localhost:3000",
+		AllowOrigins:     "https://kantine.victorbuch.xyz, https://programmering-eksamensprojekt.vercel.app, https://programmering-eksamensprojekt-production.up.railway.app, http://localhost:3000",
 		AllowCredentials: true,
 	}))
 	router.SetupRoutes(app)
