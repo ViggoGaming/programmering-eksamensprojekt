@@ -412,7 +412,7 @@ func SignIn(c *fiber.Ctx) error {
 		Name:     "jwt",
 		Value:    tokenSigned,
 		Expires:  time.Now().Add(time.Hour * 24),
-		HTTPOnly: false,
+		HTTPOnly: true,
 		SameSite: "None",
 		Secure:   true,
 	}
@@ -429,7 +429,7 @@ func SignOut(c *fiber.Ctx) error {
 		Name:     "jwt",
 		Value:    "",
 		Expires:  time.Now().Add(-time.Hour * 24),
-		HTTPOnly: false,
+		HTTPOnly: true,
 		SameSite: "None",
 		Secure:   true,
 	}
