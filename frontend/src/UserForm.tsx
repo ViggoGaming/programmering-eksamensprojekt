@@ -22,7 +22,7 @@ function UserForm() {
       if (response.status === 200) {
         setLoggedInUser(response.data.email);
         setIsAdmin(response.data.admin);
-        setUser({ email: '', password: '' });
+        //setUser({ email: '', password: '' });
       }
     } catch (error) {
       console.log(error);
@@ -45,8 +45,8 @@ function UserForm() {
       const response = await axios.post(`${env.REACT_APP_BACKEND_URL}/api/user/signin`, user, { withCredentials: true });
       if (response.status === 200) {
         setLoggedInUser(user.email);
-        setUser({ email: '', password: '' });
         checkLoggedInUser();
+      //  setUser({ email: '', password: '' });
       }
     } catch (error) {
       console.log(error);

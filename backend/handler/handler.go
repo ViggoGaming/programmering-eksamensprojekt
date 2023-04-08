@@ -413,6 +413,7 @@ func SignIn(c *fiber.Ctx) error {
 		Value:    tokenSigned,
 		Expires:  time.Now().Add(time.Hour * 24),
 		HTTPOnly: true,
+		SameSite: "None",
 	}
 
 	c.Cookie(&cookie)
