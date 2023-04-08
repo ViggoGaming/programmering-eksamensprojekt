@@ -412,10 +412,9 @@ func SignIn(c *fiber.Ctx) error {
 		Name:     "jwt",
 		Value:    tokenSigned,
 		Expires:  time.Now().Add(time.Hour * 24),
-		HTTPOnly: true,
+		HTTPOnly: false,
 		SameSite: "None",
 		Secure:   true,
-		Domain:   "https://programmering-eksamensprojekt.vercel.app",
 	}
 
 	c.Cookie(&cookie)
@@ -430,10 +429,9 @@ func SignOut(c *fiber.Ctx) error {
 		Name:     "jwt",
 		Value:    "",
 		Expires:  time.Now().Add(-time.Hour * 24),
-		HTTPOnly: true,
+		HTTPOnly: false,
 		SameSite: "None",
 		Secure:   true,
-		Domain:   "https://programmering-eksamensprojekt.vercel.app",
 	}
 
 	c.Cookie(&cookie)
