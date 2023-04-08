@@ -4,6 +4,7 @@ import './App.css';
 import Swal from 'sweetalert2';
 import env from "react-dotenv";
 import { Link, Router } from "react-router-dom";
+import Orders from './Orders'
 
 
 function Food() {
@@ -56,8 +57,8 @@ function Food() {
   return (
     <div className="edit-foods">
       {foodResults && foodResults.length > 0 ? (
-        <Table striped bordered hover size="sm">
-          <thead>
+        <Table bordered hover>
+        <thead>
             <tr>
               <th>ID</th>
               <th>Navn</th>
@@ -90,6 +91,9 @@ function Food() {
       ) : (
         <p>Der er ingen mad retter i databasen</p>
       )}
+
+      <Orders />
+
     </div>
   );
 }

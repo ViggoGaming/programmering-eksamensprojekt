@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
+	"github.com/mailgun/mailgun-go/v4"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -413,8 +414,8 @@ func SignIn(c *fiber.Ctx) error {
 		Value:    tokenSigned,
 		Expires:  time.Now().Add(time.Hour * 24),
 		HTTPOnly: true,
-		SameSite: "None",
-		Secure:   true,
+		//		SameSite: "None",
+		//		Secure:   true,
 	}
 
 	c.Cookie(&cookie)
@@ -430,8 +431,8 @@ func SignOut(c *fiber.Ctx) error {
 		Value:    "",
 		Expires:  time.Now().Add(-time.Hour * 24),
 		HTTPOnly: true,
-		SameSite: "None",
-		Secure:   true,
+		//		SameSite: "None",
+		//		Secure:   true,
 	}
 
 	c.Cookie(&cookie)
@@ -532,4 +533,104 @@ func RequireAdminEmail() fiber.Handler {
 		// User is authenticated and has the required email, pass control to the next handler
 		return c.Next()
 	}
+}
+
+func SendPickupReadyEmail(toEmail string, foodName string, orderID string, foodPrice float32, foodImage string) error {
+	mg := mailgun.NewMailgun(configs.Config("MAILGUN_DOMAIN"), configs.Config("MAILGUN_API"))
+	mg.SetAPIBase(mailgun.APIBaseEU)
+
+	from := "Sukkertoppens kantine <kantine@victorbuch.xyz>"
+	subject := "Din madbestilling er klar til afhentning"
+
+	html := fmt.Sprintf(`<!DOCTYPE html>
+	<html lang="da">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Email</title>
+	</head>
+	<body>
+		<p>Hej! Din bestilling af %s med ordre nummer %s er klar til afhentning i kantinen. Prisen er %.2f kr.</p>
+		<p>Her er et billede af maden:</p>
+		<img src="%s" alt="Food Image" style="max-width: 100%%; height: auto;">
+	</body>
+	</html>`, foodName, orderID, foodPrice, foodImage)
+
+	message := mg.NewMessage(from, subject, "", toEmail)
+	message.SetHtml(html)
+
+	_, _, err := mg.Send(context.Background(), message)
+	return err
+}
+
+func GetAllOrders(c *fiber.Ctx) error {
+	db := database.DB.Db
+	var orders []model.Order
+	db.Preload("Food").Find(&orders)
+	return c.JSON(orders)
+}
+
+func CreateOrder(c *fiber.Ctx) error {
+	db := database.DB.Db
+	order := new(model.Order)
+
+	type RequestBody struct {
+		Email  string `json:"email"`
+		FoodID uint   `json:"foodid"`
+	}
+
+	var requestBody RequestBody
+	if err := c.BodyParser(&requestBody); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Cannot parse JSON",
+		})
+	}
+
+	order.FoodID = requestBody.FoodID
+	order.UserEmail = requestBody.Email
+
+	// Find the food item by FoodID and add it to the order
+	food := new(model.Food)
+	result := db.First(food, order.FoodID)
+	if result.Error != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Food not found",
+		})
+	}
+	order.Food = *food
+
+	if err := db.Create(&order).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to create the order",
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(order)
+}
+
+func MarkOrderAsReady(c *fiber.Ctx) error {
+	db := database.DB.Db
+
+	orderID := c.Params("id")
+	var order model.Order
+	if err := db.Preload("Food").First(&order, "id = ?", orderID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Order not found",
+		})
+	}
+	order.Ready = true
+	db.Save(&order)
+
+	// Send email
+	err := SendPickupReadyEmail(order.UserEmail, order.Food.Name, order.ID, order.Food.Price, order.Food.Image)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to send email",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": "Order is ready",
+		"order":   order,
+	})
 }

@@ -40,7 +40,7 @@ func Connect() {
 	fmt.Println("Connected")
 	fmt.Println("running migrations")
 	//db.DropTableIfExists(&model.Food{}, &model.WeeklyMenu{})
-	db.AutoMigrate(&model.Food{}, &model.WeeklyMenu{}, &model.User{})
+	db.AutoMigrate(&model.Food{}, &model.WeeklyMenu{}, &model.User{}, &model.Order{})
 	//db.Model(&model.WeeklyMenu{}).AddForeignKey()
 
 	//	db.Model(&model.WeeklyMenu{}).AddForeignKey("food_id", "foods(id)", "RESTRICT", "RESTRICT")

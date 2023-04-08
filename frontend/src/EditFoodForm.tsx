@@ -79,7 +79,6 @@ function EditFoodForm() {
         }
     };
 
-
             return (
             <div>
                 <Header />

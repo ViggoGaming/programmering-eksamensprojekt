@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Food_card from './Food.component';
+import FoodCard from './Food.component';
+import { Container, Row } from 'react-bootstrap';
 import './App.css';
 import env from 'react-dotenv';
 import axios from 'axios';
@@ -22,24 +23,27 @@ function Food() {
   }, []);
 
   return (
-    <div className="cards">
-      {foodResults.length > 0 ? (
-        foodResults.map(
-          food =>
-            food['visible'] === true && (
-              <Food_card
-                key={food['_id']}
-                name={food['name']}
-                description={food['description']}
-                image={food['image']}
-                price={food['price']}
-              />
-            ),
-        )
-      ) : (
-        <p>Der er ingen mad retter i databasen</p>
-      )}
-    </div>
+    <Container>
+      <Row>
+        {foodResults.length > 0 ? (
+          foodResults.map(
+            food =>
+              food['visible'] === true && (
+                <FoodCard
+                  key={food['id']}
+                  foodID={food['id']}
+                  name={food['name']}
+                  description={food['description']}
+                  image={food['image']}
+                  price={food['price']}
+                />
+              ),
+          )
+        ) : (
+          <p>Der er ingen mad retter i databasen</p>
+        )}
+      </Row>
+    </Container>
   );
 }
 

@@ -28,4 +28,10 @@ func SetupRoutes(app *fiber.App) {
 	user.Post("/signup", handler.SignUp)
 	user.Post("/signin", handler.SignIn)
 	user.Post("/signout", handler.SignOut)
+
+	order := api.Group("/order")
+	order.Get("/", handler.RequireAdminEmail(), handler.GetAllOrders)
+	order.Post("/", handler.CreateOrder)
+	order.Put("/:id", handler.RequireAdminEmail(), handler.MarkOrderAsReady)
+
 }

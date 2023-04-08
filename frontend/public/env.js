@@ -1,11 +1,11 @@
 window.env = {
   "SHELL": "/usr/bin/zsh",
   "npm_command": "start",
-  "WINDOWID": "14680069",
+  "WINDOWID": "25165829",
   "npm_config_userconfig": "/home/viggo/.npmrc",
   "npm_config_cache": "/home/viggo/.npm",
   "TERM_PROGRAM_VERSION": "3.3a",
-  "TMUX": "/tmp/tmux-1000/default,60642,0",
+  "TMUX": "/tmp/tmux-1000/default,148127,0",
   "NODE": "/usr/bin/node",
   "GRADLE_HOME": "/usr/share/java/gradle",
   "COLOR": "1",
@@ -39,8 +39,8 @@ window.env = {
   "npm_package_name": "kantine-it-system",
   "npm_config_prefix": "/home/viggo/.npm-global",
   "USER": "viggo",
-  "TMUX_PANE": "%0",
-  "REACT_APP_BACKEND_URL": "https://programmering-eksamensprojekt-production.up.railway.app",
+  "TMUX_PANE": "%1",
+  "REACT_APP_BACKEND_URL": "http://localhost:8080",
   "VISUAL": "nvim",
   "AUTOJUMP_SOURCED": "1",
   "DISPLAY": ":0",
@@ -62,6 +62,6 @@ window.env = {
   "npm_config_global_prefix": "/home/viggo/.npm-global",
   "MAIL": "/var/spool/mail/viggo",
   "npm_node_execpath": "/usr/bin/node",
-  "OLDPWD": "/home/viggo/Documents/dev/golang/kantine/frontend/build",
+  "OLDPWD": "/home/viggo/Documents/dev/golang/kantine",
   "TERM_PROGRAM": "tmux"
 };

@@ -31,3 +31,12 @@ type CurrentUser struct {
 	Email string `json:"email" gorm:"uniqueIndex"`
 	Admin bool   `json:"admin"`
 }
+
+// Order represents an order made by a user
+type Order struct {
+	ID        string `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	Food      Food   `json:"food" gorm:"foreignkey:FoodID"`
+	FoodID    uint   `json:"foodid"`
+	UserEmail string `json:"email"`
+	Ready     bool   `json:"ready"`
+}
