@@ -415,6 +415,7 @@ func SignIn(c *fiber.Ctx) error {
 		HTTPOnly: true,
 		SameSite: "None",
 		Secure:   true,
+		Domain:   "https://programmering-eksamensprojekt.vercel.app",
 	}
 
 	c.Cookie(&cookie)
@@ -432,6 +433,7 @@ func SignOut(c *fiber.Ctx) error {
 		HTTPOnly: true,
 		SameSite: "None",
 		Secure:   true,
+		Domain:   "https://programmering-eksamensprojekt.vercel.app",
 	}
 
 	c.Cookie(&cookie)
