@@ -29,8 +29,8 @@ function Menu() {
       setIsLoading(true);
       setErrorMessage('');
       try {
-        console.log(`${REACT_APP_BACKEND_URL}`)
-        const response = await fetch(`${REACT_APP_BACKEND_URL}/api/menu/${weekNumber}`);
+//        const response = await fetch(`${REACT_APP_BACKEND_URL}/api/menu/${weekNumber}`);
+        const response = await fetch(`https://programmering-eksamensprojekt-production.up.railway.app/api/menu/${weekNumber}`)
         const data = await response.json();
         if (response.ok) {
           setMenuData(data.data);
