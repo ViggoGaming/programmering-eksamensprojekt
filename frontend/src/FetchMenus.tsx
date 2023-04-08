@@ -72,7 +72,7 @@ function Menu() {
               <option value="0">Vælg uge</option>
               {[...Array(52)].map((_, index) => (
                 <option key={index} value={index + 1}>
-                  Week {index + 1}
+                  Uge {index + 1}
                 </option>
               ))}
             </Form.Select>
