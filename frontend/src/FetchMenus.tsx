@@ -88,10 +88,10 @@ function Menu() {
       )}
       {errorMessage && (
         <Row>
-          <Col>
-            <Alert variant="danger">{errorMessage}</Alert>
-          </Col>
-        </Row>
+        <Col>
+          <p>Ingen menu fundet denne uge</p>
+        </Col>
+      </Row>
       )}
       {!isLoading && !errorMessage && menuData.length === 0 && (
         <Row>

@@ -56,7 +56,7 @@ const FoodCard = (props) => {
                     <Card.Title>{props.name}</Card.Title>
                     <Card.Text>{props.description}</Card.Text>
                     <Card.Text>{props.price} kr.</Card.Text>
-                    <button className="btn btn-primary" onClick={handleOrder}>Order</button>
+                    <button className="btn btn-primary" onClick={handleOrder}>Bestil</button>
                 </Card.Body>
             </Card>
         </Col>
