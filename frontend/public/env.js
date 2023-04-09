@@ -16,7 +16,7 @@ window.env = {
   "LOGNAME": "viggo",
   "XDG_SESSION_TYPE": "tty",
   "npm_config_init_module": "/home/viggo/.npm-init.js",
-  "SYSTEMD_EXEC_PID": "618",
+  "SYSTEMD_EXEC_PID": "614",
   "_": "/home/viggo/Documents/dev/golang/kantine/frontend/node_modules/.bin/react-dotenv",
   "XAUTHORITY": "/home/viggo/.Xauthority",
   "WINDOWPATH": "1",
@@ -27,7 +27,7 @@ window.env = {
   "_JAVA_AWT_WM_NONREPARENTING": "1",
   "npm_package_version": "0.1.0",
   "KEYTIMEOUT": "1",
-  "INVOCATION_ID": "c30185f950ae47729d87a35c35c37030",
+  "INVOCATION_ID": "95eba3bbe46244efb2423b64b82e4be9",
   "INIT_CWD": "/home/viggo/Documents/dev/golang/kantine/frontend",
   "npm_lifecycle_script": "react-dotenv && react-scripts start",
   "XDG_SESSION_CLASS": "user",
@@ -37,6 +37,7 @@ window.env = {
   "npm_package_name": "kantine-it-system",
   "npm_config_prefix": "/home/viggo/.npm-global",
   "USER": "viggo",
+  "REACT_APP_BACKEND_URL": "https://api.victorbuch.xyz",
   "VISUAL": "nvim",
   "AUTOJUMP_SOURCED": "1",
   "DISPLAY": ":0",
@@ -58,6 +59,5 @@ window.env = {
   "npm_config_global_prefix": "/home/viggo/.npm-global",
   "MAIL": "/var/spool/mail/viggo",
   "npm_node_execpath": "/usr/bin/node",
-  "OLDPWD": "/home/viggo/Documents/dev/golang/kantine",
-  "REACT_APP_BACKEND_URL": "http://localhost:8080"
+  "OLDPWD": "/home/viggo/Documents/dev/golang/kantine"
 };
