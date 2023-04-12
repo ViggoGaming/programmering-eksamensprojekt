@@ -50,7 +50,7 @@ const FoodCard = (props) => {
 
   return (
     <Col md={4}>
-      <Card className="card" style={{ height: "400px" }}>
+      <Card className="card"> 
         <Card.Img variant="top" src={props.image} alt="" style={{ height: "100%", objectFit: "cover" }} />
         <Card.Body>
           <Card.Title>{props.name}</Card.Title>
