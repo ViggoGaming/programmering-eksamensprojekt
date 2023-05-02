@@ -7,18 +7,15 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.mysql import FLOAT, BOOLEAN
 
 # create a SQLAlchemy engine to connect to the database
-engine = create_engine("postgresql://wbfwifnt:1r5RtOE5glmrWGm16dZKYGhY_Ta-vxgS@balarama.db.elephantsql.com/wbfwifnt")
+engine = create_engine("postgresql://")
 
 # Sets up the logging, instead of using print()
 logging.basicConfig(level=logging.DEBUG)
 
-# create a Session class to interact with the database
 Session = sessionmaker(bind=engine)
 
-# create a base class for declarative models
 Base = declarative_base()
 
-# define a model to represent your table
 class Food(Base):
     __tablename__ = "foods"
 
@@ -29,7 +26,6 @@ class Food(Base):
     description = Column(String)
     visible = Column(BOOLEAN)
 
-# create a session object to interact with the database
 session = Session()
 
 params = {
